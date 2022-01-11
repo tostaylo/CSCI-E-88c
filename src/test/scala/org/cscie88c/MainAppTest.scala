@@ -3,16 +3,21 @@
   */
 
 package org.cscie88c
-import org.scalatest.flatspec.AnyFlatSpec
+import org.cscie88c.testutils.{StandardTest}
 
-class FirstSpec extends AnyFlatSpec {
-  "An empty set" should "have size 0" in {
-    assert(Set.empty.size == 0)
-  }
+class MainAppTest extends StandardTest {
 
-  it should "produce NoSuchElementException for head" in {
-    assertThrows[NoSuchElementException] {
-      Set.empty.head
+ "A Set" when {
+  "empty" should {
+    "have size 0" in {
+      Set.empty.size shouldBe 0
+    }
+
+    "produce NoSuchElementException when head is invoked" in {
+      an [NoSuchElementException] should be thrownBy {
+        Set.empty.head
+      }
     }
   }
+ }
 }
