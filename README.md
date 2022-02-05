@@ -38,8 +38,8 @@ For test files.
 
 
 ### Git
-- git pull upstream main
-- git push origin main
+- `git pull upstream main`
+- `git push origin main`
 
 ### License
 Copyright 2022, Edward Sumitra
