@@ -14,6 +14,12 @@ class SubjectTest extends StandardTest {
           )
         )
       }
+      "create Subject from CSV" in {
+        val subject = Subject.apply("4,History,false")
+        subject.id should be(4)
+        subject.name should be("History")
+        subject.isSTEM should be(false)
+      }
     }
   }
 }

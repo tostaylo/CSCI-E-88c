@@ -19,12 +19,13 @@ object Subject {
   def stemSubjects: List[Subject] =
     allSubjects.filter(subject => subject.isSTEM)
 
-  // def apply(csvRow: String): Subject = {
-  //   val fields = csvRow.split(",")
+  def apply(csvRow: String): Subject = {
+    val fields = csvRow.split(",")
 
-  //   Subject(
-  //     id = fields(0),
-  //     name = fields(1),
-  //     isStem = fields(2)
-  //   )
+    Subject(
+      id = fields(0).toInt,
+      name = fields(1),
+      isSTEM = fields(2).toBoolean
+    )
+  }
 }

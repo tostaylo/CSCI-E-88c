@@ -58,17 +58,17 @@ object Student {
     country
   ).length
 
-  // def apply(csvRow: String): Student = {
-  //   val fields = csvRow.split(",")
+  def apply(csvRow: String): Student = {
+    val fields = csvRow.split(",")
 
-  //   Student(
-  //     id = fields(0),
-  //     firstName = fields(1),
-  //     lastName = fields(2),
-  //     email = fields(3),
-  //     gender = fields(4),
-  //     country = fields(5)
-  //   )
-  // }
+    Student(
+      id = fields(0).toInt,
+      firstName = fields(1),
+      lastName = fields(2),
+      email = fields(3),
+      gender = fields(4),
+      country = fields(5)
+    )
+  }
 
 }

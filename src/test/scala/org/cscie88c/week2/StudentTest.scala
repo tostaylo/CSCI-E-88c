@@ -16,6 +16,17 @@ class StudentTest extends StandardTest {
         Student.studentTotalsByCountry("United States") should equal(2)
       }
 
+      "create Studentt from CSV" in {
+        val student =
+          Student.apply(6, "Dee", "Reynolds", "dee@dee.com", "Female", "Mexico")
+        student.id should be(6)
+        student.firstName should be("Dee")
+        student.lastName should be("Reynolds")
+        student.email should be("dee@dee.com")
+        student.gender should be("Female")
+        student.country should be("Mexico")
+      }
+
     }
   }
 }
