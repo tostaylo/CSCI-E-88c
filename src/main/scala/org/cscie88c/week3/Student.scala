@@ -27,7 +27,7 @@ object Student {
       studentList.filter(student => student.subject == subject)
 
     val sum =
-      studentsBySubject.foldLeft(0)((acc, student) => acc + student.score)
+      studentsBySubject.foldLeft(0)(_ + _.score)
 
     (sum / studentsBySubject.length).toDouble;
   }
