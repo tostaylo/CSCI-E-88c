@@ -41,6 +41,9 @@ For test files.
 - `git pull upstream main`
 - `git push origin main`
 
+### Testing
+- `sbt "test:testOnly *your-test-name"` runs one test 
+
 ### License
 Copyright 2022, Edward Sumitra
 
