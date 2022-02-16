@@ -28,10 +28,22 @@ class UtilFunctionsPropertyTest
     }
   }
 
-  test("pythagorean triples property test") {
+  test(
+    " If (x, y, z) is a pythagorean triple, then (y, x, z) is also a pythagorean triple "
+  ) {
     forAll(triplesGen) { triple =>
       UtilFunctions.pythTest(triple._1, triple._2, triple._3) should be(
         UtilFunctions.pythTest(triple._2, triple._1, triple._3)
+      )
+    }
+  }
+
+  test(
+    "If (x, y, z) is a pythagorean triple, then (2y, 2x, 2z) is also a pythagorean triple  "
+  ) {
+    forAll(triplesGen) { triple =>
+      UtilFunctions.pythTest(triple._1, triple._2, triple._3) should be(
+        UtilFunctions.pythTest(2 * triple._2, 2 * triple._1, 2 * triple._3)
       )
     }
   }
