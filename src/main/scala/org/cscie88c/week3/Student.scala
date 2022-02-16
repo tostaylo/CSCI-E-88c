@@ -23,6 +23,8 @@ object Student {
       subject: String,
       studentList: List[Student]
     ): Double = {
+    if (studentList.length <= 0) return 0;
+
     val studentsBySubject =
       studentList.filter(student => student.subject == subject)
 

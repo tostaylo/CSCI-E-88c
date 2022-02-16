@@ -27,7 +27,7 @@ class StudentTest extends StandardTest {
       }
 
       "find average score of student" in {
-        var inputStudent = Student("Dennis", "dennis@dennis.com", "Math", 50)
+        val inputStudent = Student("Dennis", "dennis@dennis.com", "Math", 50)
         Student.averageScoreByStudent(
           inputStudent,
           List(student1, student2, student3)

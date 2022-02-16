@@ -17,14 +17,21 @@ class StudentPropertyTest
     score <- Gen.choose[Int](0, 100)
   } yield Student(name, email, subject, score)
 
-  // complete the student list generator below if attempting bonus problem
-  // val studentListGen: Gen[List[Student]] = ???
-
   test("description contains name and email") {
     forAll(studentGen) { student =>
       student.description should be(
         s"name: ${student.name}, email: ${student.email}, subject: ${student.subject}, score: ${student.score}"
       )
+    }
+  }
+
+  val studentListGen: Gen[List[Student]] = Gen.listOf(studentGen)
+  test("average score by subject is < 100 for Math") {
+    forAll(studentListGen) { studentList =>
+      Student.averageScoreBySubject(
+        "Math",
+        studentList
+      ) should be < 100.toDouble
     }
   }
 }
