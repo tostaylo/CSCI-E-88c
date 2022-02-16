@@ -43,7 +43,7 @@ For test files.
 
 ### Testing
 - `sbt "test:testOnly *your-test-name"` runs one test 
-
+- `sbt "testOnly *.project-name.*"` runs a project
 ### License
 Copyright 2022, Edward Sumitra
 
