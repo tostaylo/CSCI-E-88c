@@ -28,6 +28,8 @@ object Student {
     val studentsBySubject =
       studentList.filter(student => student.subject == subject)
 
+    if (studentsBySubject.length <= 0) return 0;
+
     val sum =
       studentsBySubject.foldLeft(0)(_ + _.score)
 
