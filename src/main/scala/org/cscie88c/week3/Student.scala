@@ -32,8 +32,14 @@ object Student {
     (sum / studentsBySubject.length).toDouble;
   }
 
-  // def averageScoreByStudent(
-  //     student: Student,
-  //     studentList: List[Student]
-  //   ): Double = ???
+  def averageScoreByStudent(
+      student: Student,
+      studentList: List[Student]
+    ): Double = {
+
+    val score =
+      studentList.filter(s => s.email == student.email)(0).score
+
+    ((score.toDouble + student.score) / 2.toDouble);
+  }
 }

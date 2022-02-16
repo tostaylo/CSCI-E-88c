@@ -15,16 +15,25 @@ class StudentTest extends StandardTest {
     }
 
     "executing methods of a student" should {
-      "find average score" in {
-        val student1 = Student("Dennis", "dennis@dennis.com", "History", 80)
-        val student2 = Student("Dennis2", "dennis2@dennis.com", "History", 100)
-        val student3 = Student("Dennis2", "dennis3@dennis.com", "Math", 100)
+      val student1 = Student("Dennis", "dennis@dennis.com", "History", 80)
+      val student2 = Student("Dennis2", "dennis2@dennis.com", "History", 100)
+      val student3 = Student("Dennis2", "dennis3@dennis.com", "Math", 100)
 
+      "find average score" in {
         Student.averageScoreBySubject(
           "History",
           List(student1, student2, student3)
         ) should be(90)
       }
+
+      "find average score of student" in {
+        var inputStudent = Student("Dennis", "dennis@dennis.com", "Math", 50)
+        Student.averageScoreByStudent(
+          inputStudent,
+          List(student1, student2, student3)
+        ) should be(65)
+      }
+
       "validate email" in {
         val student1 = Student("Dennis", "dennis@dennis.com", "History", 80)
         val student2 = Student("Dennis2", "dennis2dennis.com", "History", 100)
@@ -32,6 +41,7 @@ class StudentTest extends StandardTest {
         Student.validateEmail(student1) should be(true)
         Student.validateEmail(student2) should be(false)
       }
+
     }
   }
 }
