@@ -1,17 +1,28 @@
 package org.cscie88c.week4
 
-import org.cscie88c.testutils.{StandardTest}
+import org.cscie88c.testutils.{ StandardTest }
 
 class ListUtilsTest extends StandardTest {
   "ListUtils" when {
-    "calling ones" should {
-      "return the correct value" in {
-        // write unit test here
+
+    "initialzing a list" should {
+      "return a list with the correct size and initial values" in {
+        ListUtils.initDoubleList(0)(3) should be(List(0, 0, 0))
       }
-    
     }
 
-    // write unit tests for zeroes, and other functions here
+    "calling ones" should {
+      "return the correct value" in {
+        ListUtils.ones(3) should be(List(1.0, 1.0, 1.0))
+      }
+    }
+
+    "calling zeros " should {
+      "return the correct value" in {
+        ListUtils.zeros(3) should be(List(0.0, 0.0, 0.0))
+      }
+    }
+
   }
 
 }
