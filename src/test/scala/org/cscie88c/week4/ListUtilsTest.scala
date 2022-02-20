@@ -38,6 +38,15 @@ class ListUtilsTest extends StandardTest {
 
       }
     }
+
+    "sorting char frequencies in a string " should {
+      "return the correct value" in {
+        val topN = ListUtils.topN(2)(ListUtils.charCounts("hello world"))
+        topN.size should be(2)
+        topN('l') should be(3)
+        topN('o') should be(2)
+      }
+    }
   }
 
 }

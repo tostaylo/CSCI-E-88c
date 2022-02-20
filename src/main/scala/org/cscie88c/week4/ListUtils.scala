@@ -1,4 +1,5 @@
 package org.cscie88c.week4
+import scala.collection.immutable.ListMap
 
 object ListUtils {
   // complete the function below
@@ -11,7 +12,7 @@ object ListUtils {
 
   def charCounts(
       sentence: String
-    ): scala.collection.mutable.Map[Char, Int] = {
+    ): Map[Char, Int] = {
 
     val map = scala.collection.mutable.Map[Char, Int]()
 
@@ -20,9 +21,10 @@ object ListUtils {
       map.update(char, mapVal + 1)
     }
 
-    map
+    map.toMap
   }
 
-  // def topN(n: Int)(frequencies: Map[Char, Int]): Map[Char, Int] = ???
+  def topN(n: Int)(frequencies: Map[Char, Int]): Map[Char, Int] =
+    ListMap(frequencies.toSeq.sortWith(_._2 > _._2): _*).slice(0, n).toMap
 
 }
