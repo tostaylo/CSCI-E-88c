@@ -23,6 +23,21 @@ class ListUtilsTest extends StandardTest {
       }
     }
 
+    "counting chars in a string " should {
+      "return the correct value" in {
+        val charCounts = ListUtils.charCounts("hello world")
+
+        charCounts('h') should be(1)
+        charCounts('e') should be(1)
+        charCounts('l') should be(3)
+        charCounts('o') should be(2)
+        charCounts('w') should be(1)
+        charCounts('r') should be(1)
+        charCounts('d') should be(1)
+        charCounts.get(' ') should be(None)
+
+      }
+    }
   }
 
 }
