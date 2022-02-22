@@ -12,5 +12,9 @@ object FunctionUtils {
     applyNtimes(n - 1)(x)(square)
   }
 
-  def deferredExecutor(name: String)(f: Int => Int): Int => Int = ???
+  def deferredExecutor(name: String)(f: Int => Int): Int => Int =
+    (x: Int) => {
+      print(s"running on deferred executor ${name} with value ${x}")
+      f(x)
+    }
 }
