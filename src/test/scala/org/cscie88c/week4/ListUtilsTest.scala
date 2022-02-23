@@ -37,6 +37,41 @@ class ListUtilsTest extends StandardTest {
         charCounts.get(' ') should be(None)
 
       }
+
+      "verifies string is a panagram" in {
+        val charCounts =
+          ListUtils.charCounts("the quick brown fox jumps over the lazy dog")
+
+        List(
+          'a',
+          'b',
+          'c',
+          'd',
+          'e',
+          'f',
+          'g',
+          'h',
+          'i',
+          'j',
+          'k',
+          'l',
+          'm',
+          'n',
+          'o',
+          'p',
+          'q',
+          'r',
+          's',
+          't',
+          'u',
+          'v',
+          'w',
+          'x',
+          'y',
+          'z'
+        ).forall(char => charCounts(char) > 0) should be(true)
+
+      }
     }
 
     "sorting char frequencies in a string " should {
