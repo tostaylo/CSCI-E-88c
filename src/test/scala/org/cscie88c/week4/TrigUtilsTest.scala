@@ -17,5 +17,13 @@ class TrigUtilsTest extends StandardTest {
       }
     }
 
+    "calling squared" should {
+      "should square the value" in {
+        TrigUtils.squared(2) should be(4)
+        TrigUtils.squared(10) should be(100)
+        TrigUtils.squared(0) should be(0)
+      }
+    }
+
   }
 }
