@@ -28,7 +28,11 @@ object FunctionUtils {
     case _                            => ""
   }
 
-  def fizzBuzz(n: Int): List[String] = ???
+  def fizzBuzz(n: Int): List[String] =
+    List.range(1, n).map { x =>
+      val result = fizzBuzzString(x)
+      if (!result.isEmpty()) result else x.toString()
+    }
 
   // Problem 2
   def tanDegrees: PartialFunction[Double, Double] = ???

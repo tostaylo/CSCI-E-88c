@@ -25,7 +25,27 @@ class FunctionUtilsTest extends StandardTest {
 
     "calling fizzBuzz" should {
       "return the correct value" in {
-        // write unit tests here
+        FunctionUtils.fizzBuzz(2) should be(List("1"))
+        FunctionUtils.fizzBuzz(6) should be(List("1", "2", "Fizz", "4", "Buzz"))
+        FunctionUtils.fizzBuzz(16) should be(
+          List(
+            "1",
+            "2",
+            "Fizz",
+            "4",
+            "Buzz",
+            "Fizz",
+            "7",
+            "8",
+            "Fizz",
+            "Buzz",
+            "11",
+            "Fizz",
+            "13",
+            "14",
+            "FizzBuzz"
+          )
+        )
       }
     }
 
