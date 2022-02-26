@@ -3,13 +3,14 @@ package org.cscie88c.week5
 import org.cscie88c.testutils.{ StandardTest }
 import FunctionUtils.CustomerTransaction
 
-// run using: sbt "testOnly org.cscie88c.week5.FunctionUtilsTest"
 class FunctionUtilsTest extends StandardTest {
   "FunctionUtils" when {
-    // Problem 1 unit tests
     "calling colorToCode" should {
       "return the correct value for white" in {
-        // write unit tests here
+        FunctionUtils.colorToCode("Black") should be((0, 0, 0))
+        FunctionUtils.colorToCode("White") should be((255, 255, 255))
+        FunctionUtils.colorToCode("lime") should be((0, 255, 0))
+        FunctionUtils.colorToCode("Whites") should not be ((255, 255, 255))
       }
     }
 
@@ -24,7 +25,7 @@ class FunctionUtilsTest extends StandardTest {
         // write unit tests here
       }
     }
-    
+
     // Problem 2 unit tests
 
     // Problem 3 unit tests
