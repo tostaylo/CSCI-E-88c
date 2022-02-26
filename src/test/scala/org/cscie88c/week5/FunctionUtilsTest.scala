@@ -16,7 +16,10 @@ class FunctionUtilsTest extends StandardTest {
 
     "calling fizzBuzzString" should {
       "return the correct value" in {
-        // write unit tests here
+        FunctionUtils.fizzBuzzString(3) should be("Fizz")
+        FunctionUtils.fizzBuzzString(5) should be("Buzz")
+        FunctionUtils.fizzBuzzString(15) should be("FizzBuzz")
+        FunctionUtils.fizzBuzzString(11) should be("")
       }
     }
 

@@ -21,7 +21,12 @@ object FunctionUtils {
     case _        => (-1, -1, -1)
   }
 
-  def fizzBuzzString(n: Int): String = ???
+  def fizzBuzzString(n: Int): String = n match {
+    case n if n % 3 == 0 && n % 5 > 0 => "Fizz"
+    case n if n % 5 == 0 && n % 3 > 0 => "Buzz"
+    case n if n % 15 == 0             => "FizzBuzz"
+    case _                            => ""
+  }
 
   def fizzBuzz(n: Int): List[String] = ???
 
