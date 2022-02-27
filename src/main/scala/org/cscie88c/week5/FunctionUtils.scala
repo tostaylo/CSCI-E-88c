@@ -51,6 +51,6 @@ object FunctionUtils {
 
   def flip2[A, B, C](f: (A, B) => C): (B, A) => C = (a, b) => f(b, a)
 
-  // Write a generic function sampleList parameterized by type A, that returns the first 5 elements of a list of type A.
+  def sampleList[A](list: List[A]): List[A] = list.slice(0, 5)
 
 }

@@ -78,7 +78,20 @@ class FunctionUtilsTest extends StandardTest {
       }
     }
 
-    // Bonus unit tests
+    "calling sampleList" should {
+      "return first 5 elements of list of any type" in {
+        FunctionUtils.sampleList(List(1, 2, 3, 4, 5, 6)) should be(
+          List(1, 2, 3, 4, 5)
+        )
+        FunctionUtils.sampleList(List("1", "2", "3", "4", "5", "6")) should be(
+          List("1", "2", "3", "4", "5")
+        )
+        FunctionUtils.sampleList(
+          List(true, false, true, false, true, false)
+        ) should be(
+          List(true, false, true, false, true)
+        )
+      }
+    }
   }
-
 }
