@@ -71,7 +71,12 @@ class FunctionUtilsTest extends StandardTest {
         FunctionUtils.totalHighValueTransactions(transactions) should be(203.0)
       }
     }
-    // Problem 3 unit tests
+
+    "calling flip2" should {
+      "flips arguments" in {
+        FunctionUtils.flip2(math.pow)(5, 2) should be(32)
+      }
+    }
 
     // Bonus unit tests
   }

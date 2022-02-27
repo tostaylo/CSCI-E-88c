@@ -49,8 +49,7 @@ object FunctionUtils {
     amounts.foldLeft(0.00)((acc, next) => acc + next)
   }
 
-  // Problem 3
-  def flip2[A, B, C](f: (A, B) => C): (B, A) => C = ???
+  def flip2[A, B, C](f: (A, B) => C): (B, A) => C = (a, b) => f(b, a)
 
   // Write a generic function sampleList parameterized by type A, that returns the first 5 elements of a list of type A.
 
