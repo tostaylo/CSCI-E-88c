@@ -48,9 +48,17 @@ class FunctionUtilsTest extends StandardTest {
         )
       }
     }
+    "calling tanDegrees" should {
+      "return the correct value for tanDegrees" in {
+        FunctionUtils.tanDegrees(45) should be(1.619 +- .001)
+      }
 
-    // Problem 2 unit tests
-
+      "return the correct value for tanDegrees only for defined values" in {
+        FunctionUtils.tanDegrees.isDefinedAt(90) should be(false)
+        FunctionUtils.tanDegrees.isDefinedAt(-90) should be(false)
+        FunctionUtils.tanDegrees.isDefinedAt(91) should be(true)
+      }
+    }
     // Problem 3 unit tests
 
     // Bonus unit tests

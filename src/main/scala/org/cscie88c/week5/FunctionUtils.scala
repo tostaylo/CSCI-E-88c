@@ -35,7 +35,9 @@ object FunctionUtils {
     }
 
   // Problem 2
-  def tanDegrees: PartialFunction[Double, Double] = ???
+  def tanDegrees: PartialFunction[Double, Double] = {
+    case x if x != 90 && x != -90 => Math.tan(x)
+  }
 
   def totalHighValueTransactions(
       transactionList: List[CustomerTransaction]
