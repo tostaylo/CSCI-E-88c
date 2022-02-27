@@ -41,7 +41,13 @@ object FunctionUtils {
 
   def totalHighValueTransactions(
       transactionList: List[CustomerTransaction]
-    ): Double = ???
+    ): Double = {
+    val amounts = transactionList collect {
+      case transaction if transaction.transactionAmount > 100 =>
+        transaction.transactionAmount
+    }
+    amounts.foldLeft(0.00)((acc, next) => acc + next)
+  }
 
   // Problem 3
   def flip2[A, B, C](f: (A, B) => C): (B, A) => C = ???

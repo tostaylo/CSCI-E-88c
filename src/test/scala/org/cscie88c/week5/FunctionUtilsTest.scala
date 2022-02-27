@@ -59,6 +59,18 @@ class FunctionUtilsTest extends StandardTest {
         FunctionUtils.tanDegrees.isDefinedAt(91) should be(true)
       }
     }
+
+    "calling totalHighValueTransactions" should {
+      val transactions =
+        List(
+          CustomerTransaction("1", "1/1/01", 90),
+          CustomerTransaction("2", "1/1/01", 101),
+          CustomerTransaction("3", "1/1/01", 102)
+        )
+      "return the sum of high value transactions" in {
+        FunctionUtils.totalHighValueTransactions(transactions) should be(203.0)
+      }
+    }
     // Problem 3 unit tests
 
     // Bonus unit tests
