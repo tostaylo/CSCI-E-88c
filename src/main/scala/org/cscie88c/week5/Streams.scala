@@ -33,7 +33,8 @@ object Streams {
     )
   )
 
-  // def healthyDogs(dogs: LazyList[Dog]): LazyList[Dog] = ???
+  def healthyDogs(dogs: LazyList[Dog]): LazyList[Dog] =
+    dogs.filter(_.hasCurrentShots)
 
   // def averageHealthyAge(allDogs: LazyList[Dog], sampleSize: Int): Double = ???
 

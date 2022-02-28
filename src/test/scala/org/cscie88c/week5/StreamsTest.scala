@@ -20,5 +20,17 @@ class StreamsTest extends StandardTest {
         it1.next().name should not be (it1.next().name)
       }
     }
+
+    "healthyDogs" should {
+      "only contain healthy dogs" in {
+        val it1 = Streams.healthyDogs(Streams.dogs).iterator
+        it1.next().hasCurrentShots should be(true)
+        it1.next().hasCurrentShots should be(true)
+        it1.next().hasCurrentShots should be(true)
+        it1.next().hasCurrentShots should be(true)
+        it1.next().hasCurrentShots should be(true)
+        it1.next().hasCurrentShots should be(true)
+      }
+    }
   }
 }
