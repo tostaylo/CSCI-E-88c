@@ -23,13 +23,8 @@ class StreamsTest extends StandardTest {
 
     "healthyDogs" should {
       "only contain healthy dogs" in {
-        val it1 = Streams.healthyDogs(Streams.dogs).iterator
-        it1.next().hasCurrentShots should be(true)
-        it1.next().hasCurrentShots should be(true)
-        it1.next().hasCurrentShots should be(true)
-        it1.next().hasCurrentShots should be(true)
-        it1.next().hasCurrentShots should be(true)
-        it1.next().hasCurrentShots should be(true)
+        val fiveDogs = Streams.healthyDogs(Streams.dogs).take(5)
+        fiveDogs.foreach(_.hasCurrentShots should be(true))
       }
     }
   }
