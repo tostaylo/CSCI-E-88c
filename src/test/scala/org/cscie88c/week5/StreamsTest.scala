@@ -16,10 +16,8 @@ class StreamsTest extends StandardTest {
 
     "dogs" should {
       "contain unique dogs" in {
-        // val it1 = Streams.dogs.iterator
-        // val it2 = Streams.dogs.iterator
-
-        // it1.next().name should not be (it2.next().name)
+        val it1 = Streams.dogs.iterator
+        it1.next().name should not be (it1.next().name)
       }
     }
   }
