@@ -27,5 +27,17 @@ class StreamsTest extends StandardTest {
         fiveDogs.foreach(_.hasCurrentShots should be(true))
       }
     }
+
+    "averageHealthyAge" should {
+      "calculate average age of healthy dogs" in {
+        val threeHealthyDogs = Streams.dogs.filter(_.hasCurrentShots).take(3)
+        val averageAge =
+          (threeHealthyDogs(0).age.toDouble
+            + threeHealthyDogs(1).age.toDouble
+            + threeHealthyDogs(2).age.toDouble) / 3.toDouble
+
+        Streams.averageHealthyAge(threeHealthyDogs, 3) should be(averageAge)
+      }
+    }
   }
 }

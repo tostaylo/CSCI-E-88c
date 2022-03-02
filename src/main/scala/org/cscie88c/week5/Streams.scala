@@ -36,6 +36,9 @@ object Streams {
   def healthyDogs(dogs: LazyList[Dog]): LazyList[Dog] =
     dogs.filter(_.hasCurrentShots)
 
-  // def averageHealthyAge(allDogs: LazyList[Dog], sampleSize: Int): Double = ???
+  def averageHealthyAge(allDogs: LazyList[Dog], sampleSize: Int): Double =
+    (healthyDogs(allDogs)
+      .take(sampleSize)
+      .foldLeft(0.00)(_ + _.age.toDouble)) / sampleSize.toDouble
 
 }
