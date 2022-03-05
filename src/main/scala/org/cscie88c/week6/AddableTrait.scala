@@ -1,7 +1,13 @@
 package org.cscie88c.week6
 
-// define the trait AddableTrait with parameterized type A below
+trait Addable[A] {
+  def plus(other: A): A
+}
 
-// define the case class MyInt that implements AddableTrait for MyInt type below
+case class MyInt(value: Int) extends Addable[MyInt] {
+  def plus(myInt: MyInt): MyInt = MyInt(myInt.value + this.value)
+}
 
-// define the case class MyBool that implements AddableTrait for MyBool type below
+case class MyBool(value: Boolean) extends Addable[MyBool] {
+  def plus(myBool: MyBool): MyBool = MyBool(myBool.value || this.value)
+}

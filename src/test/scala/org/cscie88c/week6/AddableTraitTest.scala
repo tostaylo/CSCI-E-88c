@@ -7,11 +7,13 @@ class AddableTraitTest extends StandardTest {
   "plus" should {
 
     "add two MyInt values correctly" in {
-      // add your unit tests for MyInt below
+      MyInt(5).plus(MyInt(3)) should be(MyInt(8))
     }
 
     "add two MyBool values correctly" in {
-      // add your unit tests for MyBool below
+      MyBool(true).plus(MyBool(true)) should be(MyBool(true))
+      MyBool(true).plus(MyBool(false)) should be(MyBool(true))
+      MyBool(false).plus(MyBool(false)) should be(MyBool(false))
     }
-   } 
+  }
 }
