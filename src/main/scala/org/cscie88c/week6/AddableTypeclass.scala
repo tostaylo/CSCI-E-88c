@@ -1,6 +1,5 @@
 package org.cscie88c.week6
 
-// Write a generic trait AddableTypeclass parameterized by type A
 trait AddableTypeclass[A] {
   def addTwoValues(a: A, b: A): A
 }

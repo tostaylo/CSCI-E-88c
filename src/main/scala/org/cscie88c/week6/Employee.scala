@@ -23,4 +23,11 @@ object Employee {
     employees.sorted
   }
 
+  implicit val employeeAddableTypeclass: AddableTypeclass[Employee] =
+    new AddableTypeclass[Employee] {
+
+      def addTwoValues(a: Employee, b: Employee): Employee =
+        Employee(s"${a.name} ${b.name}", a.age + b.age, a.salary + b.salary)
+    }
+
 }

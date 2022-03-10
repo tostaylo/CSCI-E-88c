@@ -28,8 +28,13 @@ class AddableTypeclassTest extends StandardTest {
         AddableTypeclass.boolAddableTypeclass
       ) should be(false)
     }
+
     "sum a list of employees" in {
-      // add your unit tests here
+      AddableAggregator.sumWithAddable(
+        List(Employee("Dennis", 40, 4000), Employee("Dee", 40, 4000))
+      )(
+        Employee.employeeAddableTypeclass
+      ) should be(Employee("Dennis Dee", 80, 8000))
     }
   }
 }
