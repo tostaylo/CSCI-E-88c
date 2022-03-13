@@ -20,8 +20,23 @@ class FutureUtilsTest extends FuturesTest {
       "return a credit score greater than 300" in {
         FutureUtils.creditScoreAPI(5).map { score: Int =>
           score should be > 300
+          score should be < 800
         }
       }
     }
+
+    // "calling futureFactorial" should {
+    //   "return the factorial of a number passed in" in {
+    //     FutureUtils.futureFactorial(4) should be(Future(Success(24)))
+    //   }
+    // }
+
+    "calling futurePermutations" should {
+      "return the permutations" in {
+        FutureUtils.futurePermuations(4, 3).map(p => p should be(24))
+        FutureUtils.futurePermuations(3, 2).map(p => p should be(6))
+      }
+    }
+
   }
 }
