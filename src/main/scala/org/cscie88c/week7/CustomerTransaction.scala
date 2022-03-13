@@ -10,5 +10,15 @@ final case class CustomerTransaction(
 )
 
 object CustomerTransaction {
-  // add companion object methods below
+  def apply(csvString: String): Option[CustomerTransaction]= {
+     try {
+      val csvToList = csvString.split(",")
+      if(csvToList.length != 3) throw new Exception()
+      
+      Some(CustomerTransaction(csvToList(0), csvToList(1), csvToList(2).toDouble))
+
+    } catch {
+     case e: Exception => None
+   }
+  }
 }

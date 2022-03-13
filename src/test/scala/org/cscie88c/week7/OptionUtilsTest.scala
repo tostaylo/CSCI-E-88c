@@ -11,7 +11,23 @@ class OptionUtilsTest extends StandardTest {
           "src/test/resources/data/dirty-retail-data-sample.csv"
         ) should be(Success(186))
       }
+
+      "return the correct number of characters in a invalid file" in {
+        OptionUtils
+          .fileCharCount(
+            "not-there.csv"
+          )
+          .isFailure should be(true)
+      }
     }
+
+  //  "calling lineStreamFromFile" should {
+  //     "return the correct number of characters in a valid file" in {
+  //       OptionUtils.lineStreamFromFile(
+  //         "src/test/resources/data/dirty-retail-data-sample.csv"
+  //       ).last should be("customer_id,trans_date,tran_amount")
+  //     }
+  //   }
   }
 
 }
