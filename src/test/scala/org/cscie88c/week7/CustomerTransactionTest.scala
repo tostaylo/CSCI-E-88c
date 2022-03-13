@@ -10,7 +10,7 @@ class CustomerTransactionTest extends StandardTest {
      case Some(value) => {
         value.customerId should be("1234")
         value.transactionDate should be("10-20-2022")
-        value. transactionAmount should be(10.0)
+        value.transactionAmount should be(10.0)
      }
      case None => None should be(Some())
      }
