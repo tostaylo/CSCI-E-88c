@@ -38,5 +38,16 @@ class FutureUtilsTest extends FuturesTest {
       }
     }
 
+    "calling asyncAverageCreditScore" should {
+      "return the average credit score" in {
+        FutureUtils
+          .asyncAverageCreditScore(List(1, 2, 3, 4))
+          .map { score: Double =>
+            score should be > 300.00
+            score should be < 800.00
+          }
+      }
+    }
+
   }
 }

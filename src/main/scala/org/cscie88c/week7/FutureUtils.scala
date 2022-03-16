@@ -36,7 +36,13 @@ object FutureUtils {
       b <- futureFactorial(n - r)
     } yield a / b
 
-  def asyncAverageCreditScore(idList: List[Int]): Future[Double] = ???
+  def asyncAverageCreditScore(idList: List[Int]): Future[Double] =
+    Future
+      .traverse(idList) { id =>
+        creditScoreAPI(id).map(score => score)
+      }
+      .map(_.sum)
+      .map(item => (item / idList.length).toDouble)
 
   def slowMultiplication(x: Long, y: Long): Long = ???
 
