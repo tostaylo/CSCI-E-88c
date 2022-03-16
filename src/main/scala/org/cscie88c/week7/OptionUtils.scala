@@ -20,10 +20,7 @@ object OptionUtils {
       case Failure(_)     => "error opening file";
     }
 
-  def lineStreamFromFile(fileName: String): Option[LazyList[String]] = {
-    var ll: LazyList[String] = LazyList()
-    for (line <- Source.fromFile(fileName).getLines)
-      ll = ll.appended(line)
-    Some(ll)
-  }
+  def lineStreamFromFile(fileName: String): Option[LazyList[String]] =
+    Option(LazyList.from(Source.fromFile(fileName).getLines))
+
 }
