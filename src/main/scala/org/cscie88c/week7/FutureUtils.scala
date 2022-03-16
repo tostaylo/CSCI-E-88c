@@ -51,6 +51,7 @@ object FutureUtils {
 
   def concurrentFactorial(n: Long): Long = ???
 
-  def sequentialFactorial(n: Long): Long = ???
+  def sequentialFactorial(n: Long): Long =
+    (1.toLong to n.toLong).foldLeft(1.toLong)(slowMultiplication)
 
 }

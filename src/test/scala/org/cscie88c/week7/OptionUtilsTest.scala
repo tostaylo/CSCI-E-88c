@@ -21,13 +21,28 @@ class OptionUtilsTest extends StandardTest {
       }
     }
 
-  //  "calling lineStreamFromFile" should {
-  //     "return the correct number of characters in a valid file" in {
-  //       OptionUtils.lineStreamFromFile(
-  //         "src/test/resources/data/dirty-retail-data-sample.csv"
-  //       ).last should be("customer_id,trans_date,tran_amount")
-  //     }
-  //   }
+    "calling charCountAsString" should {
+      "return the correct number of characters in a valid file" in {
+        OptionUtils.charCountAsString(
+          "src/test/resources/data/dirty-retail-data-sample.csv"
+        ) should be("number of characters 186")
+      }
+
+      "return the correct number of characters in a invalid file" in {
+        OptionUtils
+          .charCountAsString(
+            "not-there.csv"
+          ) should be("error opening file")
+      }
+    }
+
+    //  "calling lineStreamFromFile" should {
+    //     "return the correct number of characters in a valid file" in {
+    //       OptionUtils.lineStreamFromFile(
+    //         "src/test/resources/data/dirty-retail-data-sample.csv"
+    //       ).last should be("customer_id,trans_date,tran_amount")
+    //     }
+    //   }
   }
 
 }

@@ -14,18 +14,16 @@ object OptionUtils {
       count
     }
 
-  def charCountAsString(fileName: String): String = Try {
-    fileCharCount(fileName)
-  } match {
-    case Success(value) => s"number of characters ${value}"
-    case Failure(_)     => "error opening file";
-  }
+  def charCountAsString(fileName: String): String =
+    fileCharCount(fileName) match {
+      case Success(value) => s"number of characters ${value}"
+      case Failure(_)     => "error opening file";
+    }
 
   def lineStreamFromFile(fileName: String): Option[LazyList[String]] = {
-      var ll: LazyList[String] = LazyList()
-      for (line <- Source.fromFile(fileName).getLines){
-        ll = ll.appended(line)
-      }
-        Some(ll)
-   }
+    var ll: LazyList[String] = LazyList()
+    for (line <- Source.fromFile(fileName).getLines)
+      ll = ll.appended(line)
+    Some(ll)
+  }
 }

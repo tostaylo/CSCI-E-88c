@@ -55,5 +55,11 @@ class FutureUtilsTest extends FuturesTest {
       }
     }
 
+    "sequential factorial" should {
+      "return the factorial" in {
+        FutureUtils.sequentialFactorial(4) should be(24)
+      }
+    }
+
   }
 }
