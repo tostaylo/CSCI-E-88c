@@ -56,9 +56,27 @@ class FutureUtilsTest extends FuturesTest {
     }
 
     "sequential factorial" should {
+
       "return the factorial" in {
-        FutureUtils.sequentialFactorial(4) should be(24)
+        val t0 = System.nanoTime()
+        FutureUtils.sequentialFactorial(3) should be(6)
+        val t1 = System.nanoTime()
+        println("Elapsed time: for sequential " + (t1 - t0) + "ns")
+        1 should be(1)
       }
+
+    }
+
+    "concurrent factorial" should {
+
+      "return the factorial" in {
+        val t0 = System.nanoTime()
+        FutureUtils.concurrentFactorial(3) should be(6)
+        val t1 = System.nanoTime()
+        println("Elapsed time:  for concurrent " + (t1 - t0) + "ns")
+        1 should be(1)
+      }
+
     }
 
   }
