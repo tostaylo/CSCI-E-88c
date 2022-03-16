@@ -44,7 +44,10 @@ object FutureUtils {
       .map(_.sum)
       .map(item => (item / idList.length).toDouble)
 
-  def slowMultiplication(x: Long, y: Long): Long = ???
+  def slowMultiplication(x: Long, y: Long): Long = {
+    Thread.sleep(1000)
+    x * y
+  }
 
   def concurrentFactorial(n: Long): Long = ???
 

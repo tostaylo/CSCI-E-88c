@@ -25,11 +25,11 @@ class FutureUtilsTest extends FuturesTest {
       }
     }
 
-    // "calling futureFactorial" should {
-    //   "return the factorial of a number passed in" in {
-    //     FutureUtils.futureFactorial(4) should be(Future(Success(24)))
-    //   }
-    // }
+    "calling futureFactorial" should {
+      "return the factorial of a number passed in" in {
+        FutureUtils.futureFactorial(4).map(factorial => factorial should be(24))
+      }
+    }
 
     "calling futurePermutations" should {
       "return the permutations" in {
@@ -46,6 +46,12 @@ class FutureUtilsTest extends FuturesTest {
             score should be > 300.00
             score should be < 800.00
           }
+      }
+    }
+
+    "slow multiplication" should {
+      "return the correct product of two numbers" in {
+        FutureUtils.slowMultiplication(5, 6) should be(30)
       }
     }
 
