@@ -16,7 +16,7 @@ case class CookieSettings(
   )
 case class SignatureSettings(pkfile: String, keyPairId: String)
 case class AppSettings(cookie: CookieSettings, signature: SignatureSettings)
-
+case class SimpleApp2Config(fileName: String, month: String)
 object ConfigUtils {
 
   /** loads a configuration case class
