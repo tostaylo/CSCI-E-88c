@@ -16,7 +16,7 @@ services:
     image: esumitra/cluster-apache-spark:3.2.1
     ports:
       - "8081:8080"
-      - "7000:7000"
+      - "7001:7001"
     depends_on:
       - spark-master
     environment:
