@@ -50,6 +50,10 @@ For test files.
 - `sbt "testOnly *.project-name.*"` runs a project
 - `sbt "testOnly org.cscie88c.week5.FunctionUtilsTest"` runs the exact test given
 
+### Running
+
+- `sbt "runMain org.cscie88c.week9.SimpleApp1 <args>`
+
 ### License
 
 Copyright 2022, Edward Sumitra
