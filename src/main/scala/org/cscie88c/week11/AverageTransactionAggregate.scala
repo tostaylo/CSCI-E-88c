@@ -17,7 +17,7 @@ final case class AverageTransactionAggregate(
 }
 
 
-object AverageTansactionAggregate {
+object AverageTransactionAggregate {
   def apply(raw: RawTransaction): AverageTransactionAggregate = ???
 
   implicit val averageTransactionMonoid: Monoid[AverageTransactionAggregate] = ???
