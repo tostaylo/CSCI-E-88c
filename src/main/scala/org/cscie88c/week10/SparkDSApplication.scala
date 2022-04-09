@@ -7,27 +7,56 @@ import org.cscie88c.utils.{ SparkUtils }
 import org.apache.spark.sql.{ Dataset }
 import pureconfig.generic.auto._
 
-// write config case class below
-// case class SparkDSConfig()
+case class SparkDSConfig(
+    name: String,
+    masterUrl: String,
+    transactionFile: String
+  )
 
 // run with: sbt "runMain org.cscie88c.week10.SparkDSApplication"
-// object SparkDSApplication {
+object SparkDSApplication {
 
-//   // application main entry point
-//   def main(args: Array[String]): Unit = {
-//     implicit val conf:SparkDSConfig = readConfig()
-//     val spark = SparkUtils.sparkSession(conf.name, conf.masterUrl)
-//     val transactionDS = loadData(spark)
-//     val totalsByCategoryDS = transactionTotalsByCategory(spark,transactionDS)
-//     printTransactionTotalsByCategory(totalsByCategoryDS)
-//     spark.stop()
-//   }
+  // application main entry point
+  def main(args: Array[String]): Unit = {
+    implicit val conf: SparkDSConfig = readConfig()
+    val spark = SparkUtils.sparkSession(conf.name, conf.masterUrl)
 
-//   def readConfig(): SparkDSConfig = ???
+    println("AARDVARK")
+    val transactionDS = loadData(spark)
+    transactionDS.show
+    // val totalsByCategoryDS = transactionTotalsByCategory(spark, transactionDS)
+    // printTransactionTotalsByCategory(totalsByCategoryDS)
+    // spark.stop()
+  }
 
-//   def loadData(spark: SparkSession)(implicit conf: SparkDSConfig): Dataset[CustomerTransaction] = ???
+  def readConfig(): SparkDSConfig = {
+    val sparkConfig =
+      ConfigUtils.loadAppConfig[SparkDSConfig](
+        "org.cscie88c.spark-ds-application"
+      )
 
-//   def transactionTotalsByCategory(spark: SparkSession, transactions: Dataset[CustomerTransaction]): Dataset[(String, Double)] = ???
+    return sparkConfig;
+  }
+
+  def loadData(
+      spark: SparkSession
+    )(implicit
+      conf: SparkDSConfig
+    ): Dataset[CustomerTransaction] = {
+    import spark.implicits._;
+    spark
+      .read
+      .format("csv")
+      .option("header", "true")
+      .option("inferSchema", "true")
+      .load(conf.transactionFile)
+      .as[CustomerTransaction]
+  }
+
+  def transactionTotalsByCategory(
+      spark: SparkSession,
+      transactions: Dataset[CustomerTransaction]
+    ): Dataset[(String, Double)] = transactions.groupByKey()
 
 //   def printTransactionTotalsByCategory(ds: Dataset[(String, Double)]): Unit = ???
-// }
+}
