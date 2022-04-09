@@ -22,21 +22,11 @@ object SparkRDDApplication {
   // application entry point
   def main(args: Array[String]): Unit = {
     implicit val conf: SparkRDDConfig = readConfig() // 1. read configuration
-    // val spark = SparkSession
-    //   .builder
-    //   .appName("Simple Application")
-    //   .master("local")
-    //   .getOrCreate()
 
     val spark = SparkUtils.sparkSession(
       conf.name,
       conf.masterUrl
     ) // 2. initialize spark session
-
-    print(
-      "-------------------HELLOOOOOOOOOOOOOOOOOOOOOOOOOOO_____________________"
-    )
-    print(conf)
 
     val rddLines = loadData(spark) // 3.load data
     print(
@@ -47,19 +37,11 @@ object SparkRDDApplication {
       rddLines
     ) // 4. convert lines to transaction objects
 
-    rddTransactions.take(5).foreach(println)
-    print(
-      "-------------------PART THREEEE_____________________"
-    )
     val yearlyTransactionsRDD = transactionsAmountsByYear(
       rddTransactions
     ) // 5. transform data
 
-    yearlyTransactionsRDD.take(20).foreach(println)
-    print(
-      "-------------------PART THREEEE_____________________"
-    )
-    // printTransactionsAmountsByYear(yearlyTransactionsRDD) // 6. print results
+    printTransactionsAmountsByYear(yearlyTransactionsRDD) // 6. print results
     spark.stop() // 7. stop spark cluster
   }
 
@@ -93,7 +75,11 @@ object SparkRDDApplication {
       )
       .reduceByKey(_ + _)
 
-  // def printTransactionsAmountsByYear(
-  //     transactions: RDD[(String, Double)]
-  //   ): Unit = ???
+  def printTransactionsAmountsByYear(
+      transactions: RDD[(String, Double)]
+    ): Unit = transactions
+    .collect
+    .foreach(transaction =>
+      println(s"Year: ${transaction._1}: Sum Transactions: ${transaction._2} ")
+    )
 }
