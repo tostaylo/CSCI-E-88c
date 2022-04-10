@@ -19,14 +19,14 @@ object SparkDSApplication {
   // application main entry point
   def main(args: Array[String]): Unit = {
     implicit val conf: SparkDSConfig = readConfig()
+
     val spark = SparkUtils.sparkSession(conf.name, conf.masterUrl)
 
-    println("AARDVARK")
     val transactionDS = loadData(spark)
-    transactionDS.show
-    // val totalsByCategoryDS = transactionTotalsByCategory(spark, transactionDS)
-    // printTransactionTotalsByCategory(totalsByCategoryDS)
-    // spark.stop()
+    val totalsByCategoryDS = transactionTotalsByCategory(spark, transactionDS)
+
+    printTransactionTotalsByCategory(totalsByCategoryDS)
+    spark.stop()
   }
 
   def readConfig(): SparkDSConfig = {
@@ -56,7 +56,26 @@ object SparkDSApplication {
   def transactionTotalsByCategory(
       spark: SparkSession,
       transactions: Dataset[CustomerTransaction]
-    ): Dataset[(String, Double)] = transactions.groupByKey()
+    ): Dataset[(String, Double)] = {
+    import spark.implicits._;
 
-//   def printTransactionTotalsByCategory(ds: Dataset[(String, Double)]): Unit = ???
+    transactions
+      .as[CustomerTransaction]
+      .map {
+        case transaction if transaction.transactionAmount > 80 =>
+          ("High", transaction.transactionAmount)
+        case transaction => ("Standard", transaction.transactionAmount)
+      }
+      .groupByKey(t => t._1)
+      .mapValues(_._2)
+      .reduceGroups((x, y) => (x + y))
+  }
+
+  def printTransactionTotalsByCategory(
+      ds: Dataset[(String, Double)]
+    ): Unit = ds
+    .collect
+    .foreach(transaction =>
+      println(s"Category: ${transaction._1}, Total: ${transaction._2} ")
+    )
 }
