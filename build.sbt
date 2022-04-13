@@ -15,11 +15,13 @@ lazy val root = (project in file(".")).settings(
     "-language:higherKinds", // HKT required for Monads and other HKT types
     "-Wunused" // for scalafix
   ),
-// https://mvnrepository.com/artifact/com.twitter/algebird-core
-  libraryDependencies += "com.twitter" %% "algebird-core" % "0.13.9",
   libraryDependencies ++= Dependencies.core ++ Dependencies.scalaTest,
-  assembly / mainClass := Some("org.cscie88c.MainApp"),
-  assembly / assemblyJarName := "2022SpringScalaIntro.jar",
+  // assembly / mainClass := Some("org.cscie88c.MainApp"),
+  // assembly / assemblyJarName := "2022SpringScalaIntro.jar",
+  assembly / mainClass := Some(
+    "org.cscie88c.week11.SparkAverageTransactionAggregateJob"
+  ),
+  assembly / assemblyJarName := "2022SpringSparkJob.jar",
   assembly / test := {},
   assembly / assemblyMergeStrategy := {
     case PathList("META-INF", xs @ _*) => MergeStrategy.discard
@@ -27,7 +29,11 @@ lazy val root = (project in file(".")).settings(
     case x =>
       val oldStrategy = (assembly / assemblyMergeStrategy).value
       oldStrategy(x)
-  }
+  },
+  // see shading feature at https://github.com/sbt/sbt-assembly#shading
+  assembly / assemblyShadeRules := Seq(
+    ShadeRule.rename("shapeless.**" -> "shadeshapeless.@1").inAll
+  )
 )
 
 // Custom task to zip files for homework submission
