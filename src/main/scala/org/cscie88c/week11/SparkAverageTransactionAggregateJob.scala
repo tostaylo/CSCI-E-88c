@@ -102,7 +102,7 @@ object SparkAverageTransactionAggregateJob extends LazyLogging {
       .reduce(_ |+| _)
   }
 
-  // def joinTransactionAndResponseData(responseDS: Dataset[RawResponse], transactionDS: Dataset[RawTransaction]): Dataset[RawTransaction] = ???
+  // def joinTransactionAndResponseData(responseDS: Dataset[RawResponse], transactionDS: Dataset[RawTransaction]): Dataset[RawTransaction] =
 
   def saveAverageTransactionByCustomerId(
       spark: SparkSession,
@@ -113,9 +113,9 @@ object SparkAverageTransactionAggregateJob extends LazyLogging {
     transactions.foreach(println)
     val df = spark
       .createDataFrame(
-        transactions.map(t => Tuple3(t._1, t._2.count, t._2.totalAmount))
+        transactions.map(t => Tuple2(t._1, t._2.averageAmount))
       )
-      .toDF("customerId", "count", "amount")
+      .toDF("customerId", "averageAmount")
 
     df.write.format("csv").option("header", "true").mode("overwrite").save(path)
   }
