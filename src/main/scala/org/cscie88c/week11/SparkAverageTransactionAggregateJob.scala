@@ -32,7 +32,7 @@ object SparkAverageTransactionAggregateJob extends LazyLogging {
     val spark = SparkUtils.sparkSession(appSettings.name, appSettings.masterUrl)
     logger.info(s"settings: $appSettings")
     runJob(spark)
-    // spark.stop()
+    spark.stop()
     logger.info("XXXX: Stopped Advanced SparkApp")
   }
 
@@ -42,7 +42,7 @@ object SparkAverageTransactionAggregateJob extends LazyLogging {
       conf: SparkAverageTransactionAggregateJobConfig
     ): Unit = {
     val transactionDS: Dataset[RawTransaction] = loadTransactionData(spark)
-    val responseDS: Dataset[RawResponse] = loadCampaignResponseData(spark)
+    // val responseDS: Dataset[RawResponse] = loadCampaignResponseData(spark)
 
     val averageTransactionById: Map[String, AverageTransactionAggregate] =
       aggregateDataWithMonoid(transactionDS)
@@ -109,8 +109,15 @@ object SparkAverageTransactionAggregateJob extends LazyLogging {
       transactionsById: Map[String, AverageTransactionAggregate],
       path: String
     ): Unit = {
-    val list = transactionsById.toList
-    val df = spark.sparkContext.parallelize(list)
+    val transactions = transactionsById.toList
+    transactions.foreach(println)
+    val df = spark
+      .createDataFrame(
+        transactions.map(t => Tuple3(t._1, t._2.count, t._2.totalAmount))
+      )
+      .toDF("customerId", "count", "amount")
+
+    df.write.format("csv").option("header", "true").mode("overwrite").save(path)
   }
 
   // def saveAverageTransactionAsParquet(spark: SparkSession, transactionsById: Map[String,AverageTransactionAggregate], path: String): Unit = ???
