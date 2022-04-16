@@ -42,13 +42,18 @@ object SparkAverageTransactionAggregateJob extends LazyLogging {
       conf: SparkAverageTransactionAggregateJobConfig
     ): Unit = {
     val transactionDS: Dataset[RawTransaction] = loadTransactionData(spark)
-    transactionDS.collect.foreach(println)
     val responseDS: Dataset[RawResponse] = loadCampaignResponseData(spark)
-    responseDS.collect.foreach(println)
-    // val averageTransactionById: Map[String,AverageTransactionAggregate] = aggregateDataWithMonoid(transactionDS)
+
+    val averageTransactionById: Map[String, AverageTransactionAggregate] =
+      aggregateDataWithMonoid(transactionDS)
+
     // val customersInCampaign: Dataset[RawTransaction] = joinTransactionAndResponseData(responseDS, transactionDS)
     // val averageTransactionForCampaign: Map[String,AverageTransactionAggregate] = aggregateDataWithMonoid(customersInCampaign)
-    // saveAverageTransactionByCustomerId(spark,averageTransactionById, conf.outputPathTransaction)
+    saveAverageTransactionByCustomerId(
+      spark,
+      averageTransactionById,
+      conf.outputPathTransaction
+    )
     // saveAverageTransactionByCustomerId(spark,averageTransactionForCampaign, conf.outputPathResponseTransaction)
     // saveAverageTransactionAsParquet(spark,averageTransactionById, conf.outputPathTransaction)
   }
@@ -85,11 +90,28 @@ object SparkAverageTransactionAggregateJob extends LazyLogging {
       .as[RawResponse]
   }
 
-  // def aggregateDataWithMonoid(transactionDS: Dataset[RawTransaction]): Map[String,AverageTransactionAggregate] = ???
+  def aggregateDataWithMonoid(
+      transactionDS: Dataset[RawTransaction]
+    ): Map[String, AverageTransactionAggregate] = {
+    import transactionDS.sparkSession.implicits._
+
+    transactionDS
+      .map { transaction =>
+        Map(transaction.customer_id -> AverageTransactionAggregate(transaction))
+      }
+      .reduce(_ |+| _)
+  }
 
   // def joinTransactionAndResponseData(responseDS: Dataset[RawResponse], transactionDS: Dataset[RawTransaction]): Dataset[RawTransaction] = ???
 
-  // def saveAverageTransactionByCustomerId(spark: SparkSession, transactionsById: Map[String,AverageTransactionAggregate], path: String): Unit = ???
+  def saveAverageTransactionByCustomerId(
+      spark: SparkSession,
+      transactionsById: Map[String, AverageTransactionAggregate],
+      path: String
+    ): Unit = {
+    val list = transactionsById.toList
+    val df = spark.sparkContext.parallelize(list)
+  }
 
   // def saveAverageTransactionAsParquet(spark: SparkSession, transactionsById: Map[String,AverageTransactionAggregate], path: String): Unit = ???
 }
