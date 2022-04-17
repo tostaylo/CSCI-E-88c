@@ -18,7 +18,8 @@ case class SparkAverageTransactionAggregateJobConfig(
     inputPathTransaction: String,
     inputPathResponse: String,
     outputPathTransaction: String,
-    outputPathResponseTransaction: String
+    outputPathResponseTransaction: String,
+    outputPathParquet: String
   )
 
 object SparkAverageTransactionAggregateJob extends LazyLogging {
@@ -65,7 +66,11 @@ object SparkAverageTransactionAggregateJob extends LazyLogging {
       averageTransactionForCampaign,
       conf.outputPathResponseTransaction
     )
-    // saveAverageTransactionAsParquet(spark,averageTransactionById, conf.outputPathTransaction)
+    saveAverageTransactionAsParquet(
+      spark,
+      averageTransactionById,
+      conf.outputPathParquet
+    )
   }
 
   def loadTransactionData(
@@ -153,5 +158,20 @@ object SparkAverageTransactionAggregateJob extends LazyLogging {
     df.write.format("csv").option("header", "true").mode("overwrite").save(path)
   }
 
-  // def saveAverageTransactionAsParquet(spark: SparkSession, transactionsById: Map[String,AverageTransactionAggregate], path: String): Unit = ???
+  def saveAverageTransactionAsParquet(
+      spark: SparkSession,
+      transactionsById: Map[String, AverageTransactionAggregate],
+      path: String
+    ): Unit = {
+    val transactions = transactionsById.toList
+
+    val df = spark
+      .createDataFrame(
+        transactions.map(t => Tuple2(t._1, t._2.averageAmount))
+      )
+      .toDF("customerId", "averageAmount")
+
+    df.write.parquet(path)
+
+  }
 }
