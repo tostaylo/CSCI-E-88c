@@ -66,11 +66,12 @@ object KafkaStreamsApp {
     println("songs.length")
 
     // the first Song is the top row of the csv
-    val averageSong = songs.drop(1).reduce(_ |+| _)
+    val averageSong =
+      songs.drop(1).reduce(_ |+| _).average(songs.length.toDouble)
 
     writeFile(
       "src/main/resources/data/average_song.txt",
-      averageSong.toString()
+      averageSong.prettyPrint()
     )
 
     // val foundSong = songs.filter(_.id == inputSong)(0)
@@ -138,7 +139,36 @@ final case class Song(
     valence: String,
     tempo: String,
     duration: String
+  ) {
+
+  def average(count: Double): Song = Song(
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    (danceability.toDouble / count).toString(),
+    (energy.toDouble / count).toString(),
+    (key.toDouble / count).toString(),
+    (loudness.toDouble / count).toString(),
+    (mode.toDouble / count).toString(),
+    (speechiness.toDouble / count).toString(),
+    (acousticness.toDouble / count).toString(),
+    (instrumentalness.toDouble / count).toString(),
+    (liveness.toDouble / count).toString(),
+    (valence.toDouble / count).toString(),
+    (tempo.toDouble / count).toString(),
+    ""
   )
+  def prettyPrint(): String =
+    s"danceability: ${danceability} energy: ${energy}, key: ${key}, loudness: ${loudness}, mode: ${mode}, speechiness: ${speechiness}, acousticness: ${acousticness},instrumentalness: ${instrumentalness},liveness: ${liveness},valence: ${valence}, tempo: ${tempo},"
+}
 
 object Song {
   def apply(csvString: String): Option[Song] =
