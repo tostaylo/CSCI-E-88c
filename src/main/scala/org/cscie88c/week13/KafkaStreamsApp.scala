@@ -57,17 +57,24 @@ object KafkaStreamsApp {
     // )
 
     val inputSong = "7mitXLIMCflkhZiD34uEQI"
+    // the first Song is the top row of the csv
     val songs = Song
       .readFromCSVFile(
         "src/main/resources/data/spotify_songs.csv"
       )
+      .drop(1)
+    val groupedBySubgenre = songs.groupBy(_.playlistSubGenre)
+    val averageBySubgenre = groupedBySubgenre.map {
+      case (subgenre, songs) =>
+        (subgenre, songs.reduce(_ |+| _).average(songs.length.toDouble))
+    }
 
+    averageBySubgenre.foreach(song => println(song))
     println(songs.length)
     println("songs.length")
 
-    // the first Song is the top row of the csv
     val averageSong =
-      songs.drop(1).reduce(_ |+| _).average(songs.length.toDouble)
+      songs.reduce(_ |+| _).average(songs.length.toDouble)
 
     writeFile(
       "src/main/resources/data/average_song.txt",
