@@ -24,6 +24,38 @@ object KafkaStreamsApp {
     bw.close()
   }
 
+  def attributeDiffsByGenre(
+      averageSongsBySubgenre: Map[String, Song],
+      averageSongAttributePairs: Map[String, Any]
+    ): Map[String, List[(String, Any)]] = averageSongsBySubgenre.map {
+    case (key, value) =>
+      val genre = key;
+      val subgenreAverageSong = value;
+
+      val subgenreAverageSongMap =
+        (subgenreAverageSong.productElementNames zip subgenreAverageSong.productIterator).toMap
+
+      var attributeDiffs: List[(String, Any)] = List()
+
+      averageSongAttributePairs.foreach { kv =>
+        val key = kv._1
+        val vl = kv._2
+        val subgenreAttributeVal = subgenreAverageSongMap(key)
+
+        if (subgenreAttributeVal != "") {
+          val diff =
+            (subgenreAttributeVal.toString().toDouble - vl
+              .toString()
+              .toDouble).abs
+
+          attributeDiffs = attributeDiffs.appended((key, diff))
+        }
+
+      }
+
+      (genre, attributeDiffs);
+  }
+
   def main(args: Array[String]): Unit = {
     import Serdes._
 
@@ -63,18 +95,27 @@ object KafkaStreamsApp {
         "src/main/resources/data/spotify_songs.csv"
       )
       .drop(1)
-    val groupedBySubgenre = songs.groupBy(_.playlistSubGenre)
-    val averageBySubgenre = groupedBySubgenre.map {
-      case (subgenre, songs) =>
-        (subgenre, songs.reduce(_ |+| _).average(songs.length.toDouble))
-    }
-
-    averageBySubgenre.foreach(song => println(song))
-    println(songs.length)
-    println("songs.length")
 
     val averageSong =
       songs.reduce(_ |+| _).average(songs.length.toDouble)
+
+    val averageSongAttributePairs =
+      (averageSong.productElementNames zip averageSong.productIterator).toMap
+
+    val averageSongsBySubgenre =
+      songs
+        .groupBy(_.playlistSubGenre)
+        .map {
+          case (subgenre, songs) =>
+            (subgenre, songs.reduce(_ |+| _).average(songs.length.toDouble))
+        }
+
+    attributeDiffsByGenre(averageSongsBySubgenre, averageSongAttributePairs)
+      .foreach(println)
+    // averageSongAttributePairs.foreach(song => println(song))
+    // averageSongsBySubgenre.foreach(song => println(song))
+    println(songs.length)
+    println("songs.length")
 
     writeFile(
       "src/main/resources/data/average_song.txt",
@@ -175,6 +216,25 @@ final case class Song(
   )
   def prettyPrint(): String =
     s"danceability: ${danceability} energy: ${energy}, key: ${key}, loudness: ${loudness}, mode: ${mode}, speechiness: ${speechiness}, acousticness: ${acousticness},instrumentalness: ${instrumentalness},liveness: ${liveness},valence: ${valence}, tempo: ${tempo},"
+
+  // def getMostUniqueAttributes(song: Song): List[(String, Double)] =
+  //   List(
+  //     (
+  //       "danceability",
+  //       (danceability.toDouble - song.danceability.toDouble).abs
+  //     ),
+  //     ("energy", (energy.toDouble - song.energy.toDouble).abs),
+  //     ("key", (key.toDouble - song.key.toDouble).abs),
+  //     ("loudness", (loudness.toDouble - song.loudness.toDouble).abs),
+  //     (mode.toDouble -).toString(),
+  //     (speechiness.toDouble / count).toString(),
+  //     (acousticness.toDouble / count).toString(),
+  //     (instrumentalness.toDouble / count).toString(),
+  //     (liveness.toDouble / count).toString(),
+  //     (valence.toDouble / count).toString(),
+  //     (tempo.toDouble / count).toString()
+  //   )
+
 }
 
 object Song {
