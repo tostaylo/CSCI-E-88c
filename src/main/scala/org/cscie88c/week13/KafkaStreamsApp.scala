@@ -59,7 +59,7 @@ object KafkaStreamsApp {
 
     val csvHeader = rawSongs(0)
 
-    // the first Song is the top row of the csv
+    // the first song is the top row of the csv
     val songs = rawSongs
       .drop(1)
 
