@@ -41,7 +41,6 @@ object KafkaStreamsApp {
   def main(args: Array[String]): Unit = {
     import Serdes._
 
-    // 1. define kafka streams properties, usually from a config file
     val props: Properties = {
       val p = new Properties()
       p.put(StreamsConfig.APPLICATION_ID_CONFIG, "song-recommender-application")
@@ -49,79 +48,66 @@ object KafkaStreamsApp {
       p
     }
 
-    // 2. create KStreams DSL instance
     val builder: StreamsBuilder = new StreamsBuilder
     val textLines: KStream[String, String] =
       builder.stream[String, String]("TextLinesTopic")
-
-    textLines.peek((k, t) => println(s"stream element: $k: $t"))
-
-    // textLines.foreach((line1, line2) =>
-    //   writeFile(
-    //     "src/main/resources/data/myfile.txt",
-    //     s"1st thing: ${line1} ||| second thing:  ${line2}"
-    //   )
-    // )
-
-    val inputSong = "7mitXLIMCflkhZiD34uEQI"
 
     val rawSongs = Song
       .readFromCSVFile(
         "src/main/resources/data/spotify_songs.csv"
       )
+
     val csvHeader = rawSongs(0)
 
     // the first Song is the top row of the csv
     val songs = rawSongs
       .drop(1)
 
-    val foundSong = songs.filter(_.id == inputSong)(0)
-
-    val sameGenreSongs =
-      songs.filter(song =>
-        song.playlistGenre == foundSong.playlistGenre && song.playlistSubGenre == foundSong.playlistSubGenre
+    textLines.foreach { (count, songId) =>
+      writeFile(
+        "src/main/resources/data/input-topics.log.txt",
+        List(s"count: ${count} ||| id:  ${songId}")
       )
 
-// If this is accurate the first song should always be the input song since there should be a difference of 0 in attribute values
-    val similarSongs =
-      foundSong.rankSimilarSongs(sameGenreSongs).filter(_._1 != foundSong.id)
+      val foundSongs = songs.filter(_.id == songId)
+      if (foundSongs.length > 0) {
 
-    val recommendedSong = sameGenreSongs.find(_.id == similarSongs(0)._1).get
+        val foundSong = foundSongs(0)
 
-    writeFile(
-      "src/main/resources/data/recommended_song.csv",
-      List(csvHeader.toCSV(), recommendedSong.toCSV(), foundSong.toCSV())
-    )
+        val sameGenreSongs =
+          songs.filter(song =>
+            song.playlistGenre == foundSong.playlistGenre && song.playlistSubGenre == foundSong.playlistSubGenre
+          )
 
-    // 3. transform the data
-    // val wordCounts: KTable[String, Long] = textLines
-    //   .flatMapValues(textLine => textLine.toLowerCase.split("\\W+"))
-    //   .groupBy((_, word) => word)
-    //   .count()(Materialized.as("counts-store"))
+        // If this is accurate the first song should always be the input song since there should be a difference of 0 in attribute values
+        val similarSongs =
+          foundSong
+            .rankSimilarSongs(sameGenreSongs)
+            .filter(_._1 != foundSong.id)
 
-    // 4. write the results to a topic or other persistent store
-    // .toStream
-    // // .peek((k,t) => println(s"stream element: $k: $t")) // to print items in stream
-    // .filter((_, count) => count > 5)
-    // .map((word, count) => (word, s"$word: $count"))
-    // .to("WordsWithCountsTopic")
+        val recommendedSong =
+          sameGenreSongs.find(_.id == similarSongs(0)._1).get
 
-    // sameGenreSongs.foreach(song =>
-    //   println(
-    //     s"Artist: ${song.artist} | Song: ${song.name} | Genre: ${song.playlistGenre} | Sub-genre: ${song.playlistSubGenre}"
-    //   )
-    // )
+        writeFile(
+          "src/main/resources/data/recommended_song.csv",
+          List(csvHeader.toCSV(), recommendedSong.toCSV(), foundSong.toCSV())
+        )
+      }
+      else {
+        // Error Logging can be moved to cloud architecture
+        writeFile(
+          "src/main/resources/data/errors.log.txt",
+          List(s"Song id: ${songId} was not found")
+        )
+      }
+    }
 
-    // 5. start the streams application
     val streams: KafkaStreams = new KafkaStreams(builder.build(), props)
     streams.start()
 
-    // 6. attach shutdown handler to catch control-c
-    // sys.ShutdownHookThread {
-    //   streams.close(Duration.ofSeconds(10))
-    // }
-
-    streams.close(Duration.ofSeconds(10))
+    sys.ShutdownHookThread {
+      streams.close(Duration.ofSeconds(10))
+    }
 
   }
 
@@ -178,9 +164,6 @@ final case class Song(
     (tempo.toDouble / count).toString(),
     ""
   )
-
-  def prettyPrint(): String =
-    s"danceability: ${danceability} \n energy: ${energy}, key: ${key}, loudness: ${loudness}, mode: ${mode}, speechiness: ${speechiness}, acousticness: ${acousticness},instrumentalness: ${instrumentalness},liveness: ${liveness},valence: ${valence}, tempo: ${tempo},"
 
   def rankSimilarSongs(songs: List[Song]): List[(String, Double)] =
     songs
