@@ -17,54 +17,29 @@ import cats.implicits._
 // run with: sbt "runMain org.cscie88c.week13.KafkaStreamsApp"
 object KafkaStreamsApp {
 
-  def writeFile(filename: String, s: String): Unit = {
-    val file = new File(filename)
-    val bw = new BufferedWriter(new FileWriter(file))
-    bw.write(s)
-    bw.close()
+  implicit class CSVWrapper(val prod: Product) extends AnyVal {
+    def toCSV() = prod
+      .productIterator
+      .map {
+        case Some(value) => value
+        case None        => ""
+        case rest        => rest
+      }
+      .mkString(",")
   }
 
-  def attributeDiffsByGenre(
-      averageSongsBySubgenre: Map[String, Song],
-      averageSongAttributePairs: Map[String, Any]
-    ): Map[String, List[(String, Any)]] = averageSongsBySubgenre.map {
-    case (key, value) =>
-      val genre = key;
-      val subgenreAverageSong = value;
+  def writeFile(filename: String, lines: List[String]): Unit = {
+    val file = new File(filename)
+    val bw = new BufferedWriter(new FileWriter(file))
 
-      val subgenreAverageSongMap =
-        (subgenreAverageSong.productElementNames zip subgenreAverageSong.productIterator).toMap
+    for (line <- lines)
+      bw.write(s"${line}\n")
 
-      var attributeDiffs: List[(String, Any)] = List()
-
-      averageSongAttributePairs.foreach { kv =>
-        val key = kv._1
-        val vl = kv._2
-        val subgenreAttributeVal = subgenreAverageSongMap(key)
-
-        if (subgenreAttributeVal != "") {
-          val diff =
-            (subgenreAttributeVal.toString().toDouble - vl
-              .toString()
-              .toDouble).abs
-
-          attributeDiffs = attributeDiffs.appended((key, diff))
-        }
-
-      }
-
-      (genre, attributeDiffs);
+    bw.close()
   }
 
   def main(args: Array[String]): Unit = {
     import Serdes._
-
-    // the key to this application will be building a  graph which will have the closest songs in similarity in the neighboring nodes.  But also a binary search tree for matching the song quickly to begin with. Will bloom filter help?
-    // 1. Get average of all properties of a song. Print to file.
-    // 2. Get all songs of same genre and subgenre
-    // 3. Determine 1 attribute which deviates furthest from average.
-    // 4. Get Song input and find the attribute value.
-    // 5. Find another song in the same genre and sub genre of songs which equals that value. Return song.
 
     // 1. define kafka streams properties, usually from a config file
     val props: Properties = {
@@ -89,45 +64,34 @@ object KafkaStreamsApp {
     // )
 
     val inputSong = "7mitXLIMCflkhZiD34uEQI"
-    // the first Song is the top row of the csv
-    val songs = Song
+
+    val rawSongs = Song
       .readFromCSVFile(
         "src/main/resources/data/spotify_songs.csv"
       )
+    val csvHeader = rawSongs(0)
+
+    // the first Song is the top row of the csv
+    val songs = rawSongs
       .drop(1)
 
-    val averageSong =
-      songs.reduce(_ |+| _).average(songs.length.toDouble)
+    val foundSong = songs.filter(_.id == inputSong)(0)
 
-    val averageSongAttributePairs =
-      (averageSong.productElementNames zip averageSong.productIterator).toMap
+    val sameGenreSongs =
+      songs.filter(song =>
+        song.playlistGenre == foundSong.playlistGenre && song.playlistSubGenre == foundSong.playlistSubGenre
+      )
 
-    val averageSongsBySubgenre =
-      songs
-        .groupBy(_.playlistSubGenre)
-        .map {
-          case (subgenre, songs) =>
-            (subgenre, songs.reduce(_ |+| _).average(songs.length.toDouble))
-        }
+// If this is accurate the first song should always be the input song since there should be a difference of 0 in attribute values
+    val similarSongs =
+      foundSong.rankSimilarSongs(sameGenreSongs).filter(_._1 != foundSong.id)
 
-    attributeDiffsByGenre(averageSongsBySubgenre, averageSongAttributePairs)
-      .foreach(println)
-    // averageSongAttributePairs.foreach(song => println(song))
-    // averageSongsBySubgenre.foreach(song => println(song))
-    println(songs.length)
-    println("songs.length")
+    val recommendedSong = sameGenreSongs.find(_.id == similarSongs(0)._1).get
 
     writeFile(
-      "src/main/resources/data/average_song.txt",
-      averageSong.prettyPrint()
+      "src/main/resources/data/recommended_song.csv",
+      List(csvHeader.toCSV(), recommendedSong.toCSV(), foundSong.toCSV())
     )
-
-    // val foundSong = songs.filter(_.id == inputSong)(0)
-
-    // val sameGenreSongs =
-    //   songs.filter(song =>
-    //     song.playlistGenre == foundSong.playlistGenre && song.playlistSubGenre == foundSong.playlistSubGenre
-    //   )
 
     // 3. transform the data
     // val wordCounts: KTable[String, Long] = textLines
@@ -214,26 +178,42 @@ final case class Song(
     (tempo.toDouble / count).toString(),
     ""
   )
-  def prettyPrint(): String =
-    s"danceability: ${danceability} energy: ${energy}, key: ${key}, loudness: ${loudness}, mode: ${mode}, speechiness: ${speechiness}, acousticness: ${acousticness},instrumentalness: ${instrumentalness},liveness: ${liveness},valence: ${valence}, tempo: ${tempo},"
 
-  // def getMostUniqueAttributes(song: Song): List[(String, Double)] =
-  //   List(
-  //     (
-  //       "danceability",
-  //       (danceability.toDouble - song.danceability.toDouble).abs
-  //     ),
-  //     ("energy", (energy.toDouble - song.energy.toDouble).abs),
-  //     ("key", (key.toDouble - song.key.toDouble).abs),
-  //     ("loudness", (loudness.toDouble - song.loudness.toDouble).abs),
-  //     (mode.toDouble -).toString(),
-  //     (speechiness.toDouble / count).toString(),
-  //     (acousticness.toDouble / count).toString(),
-  //     (instrumentalness.toDouble / count).toString(),
-  //     (liveness.toDouble / count).toString(),
-  //     (valence.toDouble / count).toString(),
-  //     (tempo.toDouble / count).toString()
-  //   )
+  def prettyPrint(): String =
+    s"danceability: ${danceability} \n energy: ${energy}, key: ${key}, loudness: ${loudness}, mode: ${mode}, speechiness: ${speechiness}, acousticness: ${acousticness},instrumentalness: ${instrumentalness},liveness: ${liveness},valence: ${valence}, tempo: ${tempo},"
+
+  def rankSimilarSongs(songs: List[Song]): List[(String, Double)] =
+    songs
+      .map { song =>
+        val sum =
+          (danceability.toDouble - song
+            .danceability
+            .toDouble).abs + (energy.toDouble - song
+            .energy
+            .toDouble).abs + (energy.toDouble - song
+            .energy
+            .toDouble).abs + (key.toDouble - song
+            .key
+            .toDouble).abs + (loudness.toDouble - song
+            .loudness
+            .toDouble).abs + (mode.toDouble - song
+            .mode
+            .toDouble).abs + (speechiness.toDouble - song
+            .speechiness
+            .toDouble).abs + (acousticness.toDouble - song
+            .acousticness
+            .toDouble).abs + (instrumentalness.toDouble - song
+            .instrumentalness
+            .toDouble).abs + (liveness.toDouble - song
+            .liveness
+            .toDouble).abs + (valence.toDouble - song
+            .valence
+            .toDouble).abs + (tempo.toDouble - song.tempo.toDouble).abs
+
+        (song.id, sum)
+
+      }
+      .sortBy(_._2)
 
 }
 
@@ -242,6 +222,7 @@ object Song {
     try {
       val csvToList = csvString.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)")
       if (csvToList.length != 23) {
+        // need to print error to console here
         println(csvToList(1))
       }
 
@@ -323,3 +304,53 @@ object Song {
     }
 
 }
+
+// the key to this application will be building a  graph which will have the closest songs in similarity in the neighboring nodes.  But also a binary search tree for matching the song quickly to begin with. Will bloom filter help?
+
+// Useful if we want to identify metrics for each genre which deviate from average song
+
+// def attributeDiffsByGenre(
+//     averageSongsBySubgenre: Map[String, Song],
+//     averageSongAttributePairs: Map[String, Any]
+//   ): Map[String, List[(String, Double)]] = averageSongsBySubgenre.map {
+//   case (key, value) =>
+//     val genre = key;
+//     val subgenreAverageSong = value;
+
+//     val subgenreAverageSongMap =
+//       (subgenreAverageSong.productElementNames zip subgenreAverageSong.productIterator).toMap
+
+//     var attributeDiffs: List[(String, Double)] = List()
+
+//     averageSongAttributePairs.foreach { kv =>
+//       val key = kv._1
+//       val vl = kv._2
+//       val subgenreAttributeVal = subgenreAverageSongMap(key)
+
+//       if (subgenreAttributeVal != "") {
+//         val diff =
+//           (subgenreAttributeVal.toString().toDouble - vl
+//             .toString()
+//             .toDouble).abs
+
+//         attributeDiffs = attributeDiffs.appended((key, diff))
+//       }
+
+//     }
+
+//     (genre, attributeDiffs.sortBy(_._2));
+// }
+
+// val averageSong =
+//   songs.reduce(_ |+| _).average(songs.length.toDouble)
+
+// val averageSongAttributePairs =
+//   (averageSong.productElementNames zip averageSong.productIterator).toMap
+
+// val averageSongsBySubgenre =
+//   songs
+//     .groupBy(_.playlistSubGenre)
+//     .map {
+//       case (subgenre, songs) =>
+//         (subgenre, songs.reduce(_ |+| _).average(songs.length.toDouble))
+//     }
