@@ -1,7 +1,7 @@
 /** Configuration utils
   */
 
-package org.cscie88c.config
+package recommender.config
 
 import pureconfig.{ ConfigReader, ConfigSource }
 import pureconfig._

@@ -1,4 +1,4 @@
-package org.cscie88c.week13
+package recommender.week13
 
 import java.time.Duration
 import java.util.Properties
@@ -14,7 +14,7 @@ import org.apache.kafka.streams.{ KafkaStreams, StreamsConfig }
 import cats._
 import cats.implicits._
 
-// run with: sbt "runMain org.cscie88c.week13.KafkaStreamsApp"
+// run with: sbt "runMain recommender.week13.KafkaStreamsApp"
 object KafkaStreamsApp {
 
   implicit class CSVWrapper(val prod: Product) extends AnyVal {

@@ -48,7 +48,7 @@ For test files.
 
 - `sbt "test:testOnly *your-test-name"` runs all tests of the name given (could be many projects)
 - `sbt "testOnly *.project-name.*"` runs a project
-- `sbt "testOnly org.cscie88c.week5.FunctionUtilsTest"` runs the exact test given
+- `sbt "testOnly recommender.MainAppTest"` runs the exact test given
 
 ### License
 

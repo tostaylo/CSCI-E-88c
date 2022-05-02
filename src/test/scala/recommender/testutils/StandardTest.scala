@@ -1,4 +1,4 @@
-package org.cscie88c.testutils
+package recommender.testutils
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec

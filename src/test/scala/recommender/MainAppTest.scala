@@ -1,8 +1,8 @@
 /** tests for simple app
   */
 
-package org.cscie88c
-import org.cscie88c.testutils.{ StandardTest }
+package recommender
+import recommender.testutils.{ StandardTest }
 
 class MainAppTest extends StandardTest {
 
