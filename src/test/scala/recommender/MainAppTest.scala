@@ -1,6 +1,3 @@
-/** tests for simple app
-  */
-
 package recommender
 import recommender.testutils.{ StandardTest }
 

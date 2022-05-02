@@ -89,7 +89,6 @@ final case class Song(
 
       }
       .sortBy(_._2)
-
 }
 
 object Song {
