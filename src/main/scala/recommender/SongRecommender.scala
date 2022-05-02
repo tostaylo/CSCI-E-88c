@@ -12,8 +12,8 @@ import org.apache.kafka.streams.scala._
 import org.apache.kafka.streams.scala.kstream._
 import org.apache.kafka.streams.{ KafkaStreams, StreamsConfig }
 
-// run with: sbt "runMain recommender.KafkaStreamsApp"
-object KafkaStreamsApp {
+// run with: sbt "runMain recommender.SongRecommender"
+object SongRecommender {
 
   implicit class CSVWrapper(val prod: Product) extends AnyVal {
     def toCSV() = prod
