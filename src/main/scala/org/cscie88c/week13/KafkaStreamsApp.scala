@@ -50,7 +50,7 @@ object KafkaStreamsApp {
 
     val builder: StreamsBuilder = new StreamsBuilder
     val textLines: KStream[String, String] =
-      builder.stream[String, String]("TextLinesTopic")
+      builder.stream[String, String]("song-input-topic")
 
     val rawSongs = Song
       .readFromCSVFile(
@@ -66,7 +66,7 @@ object KafkaStreamsApp {
     textLines.foreach { (count, songId) =>
       writeFile(
         "src/main/resources/data/input-topics.log.txt",
-        List(s"count: ${count} ||| id:  ${songId}")
+        List(s"count: ${count} | id: ${songId}")
       )
 
       val foundSongs = songs.filter(_.id == songId)
@@ -90,11 +90,15 @@ object KafkaStreamsApp {
 
         writeFile(
           "src/main/resources/data/recommended_song.csv",
-          List(csvHeader.toCSV(), recommendedSong.toCSV(), foundSong.toCSV())
+          List(csvHeader.toCSV(), recommendedSong.toCSV())
+        )
+        writeFile(
+          "src/main/resources/data/found_song.csv",
+          List(csvHeader.toCSV(), foundSong.toCSV())
         )
       }
       else {
-        // Error Logging can be moved to cloud architecture
+        // Error Logging can be monitored by cloud architecture
         writeFile(
           "src/main/resources/data/errors.log.txt",
           List(s"Song id: ${songId} was not found")
@@ -108,9 +112,7 @@ object KafkaStreamsApp {
     sys.ShutdownHookThread {
       streams.close(Duration.ofSeconds(10))
     }
-
   }
-
 }
 
 final case class Song(
